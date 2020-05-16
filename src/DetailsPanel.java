@@ -7,12 +7,32 @@ import javax.swing.event.EventListenerList;
 
 public class DetailsPanel extends JPanel implements ActionListener {
 
+    /**
+     * All of the variables used for the DetailsPanel class.
+     */
     public final static String FIRST_STRING = "First";
     public final static String SECOND_STRING = "Second";
     public final static String THIRD_STRING = "Third";
-    public final static String FORTH_STRING = "Forth";
+    public final static String FOURTH_STRING = "Fourth";
     private static String outputString = "First"; // Setup as the default radio button selection.
     private EventListenerList listenerList = new EventListenerList();
+
+    private JLabel firstLabel;
+    private JLabel secondLabel;
+    private JLabel thirdLabel;
+    private JLabel forthLabel;
+    private JLabel inputBoxLabel;
+
+    private JTextField userInputField;
+    public static JTextArea outputTextArea;
+    private JScrollPane outputScrollArea;
+
+    private JRadioButton firstRadioButton;
+    private JRadioButton secondRadioButton;
+    private JRadioButton thirdRadioButton;
+    private JRadioButton forthRadioButton;
+
+    private JButton actionButton;
 
     /**
      * Sets up the details panel on the left, with a lovely wee border.
@@ -24,77 +44,15 @@ public class DetailsPanel extends JPanel implements ActionListener {
 
         setBorder(BorderFactory.createTitledBorder("Control Panel"));
 
-        ////SETUP THE LABELS ////
-        JLabel firstLabel = new JLabel("First Label: ");
-        JLabel secondLabel = new JLabel("Second Label: ");
-        JLabel thirdLabel = new JLabel("Third Label: ");
-        JLabel forthLabel = new JLabel("Forth Label: ");
-        JLabel inputBoxLabel = new JLabel("Input Label: ");
-
-        ////SETUP THE TEXT FIELDS ////
-        final JTextField userInputField = new JTextField("Default text", 10);
-        final JTextArea outputTextArea = new JTextArea();
-        final JScrollPane outputScrollArea = new JScrollPane(outputTextArea);
-        outputScrollArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        outputScrollArea.setPreferredSize(new Dimension(200, 55));
-        outputTextArea.setLineWrap(true);
-        outputTextArea.setEditable(false);
-
-        //// SETUP THE BUTTON ////
-        JButton addBtn = new JButton("Press Me!");
-        addBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String inputText = userInputField.getText().trim();
-                String outputText = inputText.toUpperCase() + "\n" + DetailsPanel.outputString + " button selected.";
-                fireDetailEvent(new DetailEvent(this, outputText));
-            }
-        });
-
-        ////SETUP THE OUTPUT BOX////
-        addDetailListener(new DetailListener(){
-            public void detailEventOccurred(DetailEvent event) {
-                String text = event.getText();
-                outputTextArea.setText(text);
-            }
-        });
-
-        //// SETUP RADIO BUTTONS ////
-        JRadioButton firstRadioButton = new JRadioButton(FIRST_STRING);
-        firstRadioButton.setMnemonic(KeyEvent.VK_A);
-        firstRadioButton.setActionCommand(FIRST_STRING);
-        firstRadioButton.setSelected(true);
-
-        JRadioButton secondRadioButton = new JRadioButton(SECOND_STRING);
-        secondRadioButton.setMnemonic(KeyEvent.VK_B);
-        secondRadioButton.setActionCommand(SECOND_STRING);
-
-        JRadioButton thirdRadioButton = new JRadioButton(THIRD_STRING);
-        thirdRadioButton.setMnemonic(KeyEvent.VK_C);
-        thirdRadioButton.setActionCommand(THIRD_STRING);
-
-        JRadioButton forthRadioButton = new JRadioButton(FORTH_STRING);
-        forthRadioButton.setMnemonic(KeyEvent.VK_D);
-        forthRadioButton.setActionCommand(FORTH_STRING);
-
-        //Group the radio buttons.
-        ButtonGroup group = new ButtonGroup();
-        group.add(firstRadioButton);
-        group.add(secondRadioButton);
-        group.add(thirdRadioButton);
-        group.add(forthRadioButton);
-
-        //Register a listener for the radio buttons.
-        firstRadioButton.addActionListener(this);
-        secondRadioButton.addActionListener(this);
-        thirdRadioButton.addActionListener(this);
-        forthRadioButton.addActionListener(this);
-
-        setLayout(new GridBagLayout());
-
-        GridBagConstraints gc = new GridBagConstraints();
+        this.setupRadioButtons();
+        this.setupJLabels();
+        this.setupTextField();
+        this.setupActionButton();
 
         //// SETUP THE LAYOUT ////
+        setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+
         gc.weightx = 0.5;
         gc.weighty = 0.5;
 
@@ -137,33 +95,135 @@ public class DetailsPanel extends JPanel implements ActionListener {
         // Generate button Row
         gc.weighty = 10;
         ++gc.gridy;
-        add(addBtn, gc);
+        add(this.actionButton, gc);
         //
     }
 
-    private void fireDetailEvent(DetailEvent event) { // Clearly this is just some kind of wizardry.
+    /**
+     * Setup method for the radio buttons.
+     */
+    private void setupRadioButtons(){
+        this.firstRadioButton = new JRadioButton(FIRST_STRING);
+        this.firstRadioButton.setMnemonic(KeyEvent.VK_A);
+        this.firstRadioButton.setActionCommand(FIRST_STRING);
+        this.firstRadioButton.setSelected(true);
+
+        this.secondRadioButton = new JRadioButton(SECOND_STRING);
+        this.secondRadioButton.setMnemonic(KeyEvent.VK_B);
+        this.secondRadioButton.setActionCommand(SECOND_STRING);
+
+        this.thirdRadioButton = new JRadioButton(THIRD_STRING);
+        this.thirdRadioButton.setMnemonic(KeyEvent.VK_C);
+        this.thirdRadioButton.setActionCommand(THIRD_STRING);
+
+        this.forthRadioButton = new JRadioButton(FOURTH_STRING);
+        this.forthRadioButton.setMnemonic(KeyEvent.VK_D);
+        this.forthRadioButton.setActionCommand(FOURTH_STRING);
+
+        //Group the radio buttons.
+        ButtonGroup group = new ButtonGroup();
+        group.add(this.firstRadioButton);
+        group.add(this.secondRadioButton);
+        group.add(this.thirdRadioButton);
+        group.add(this.forthRadioButton);
+
+        //Register a listener for the radio buttons.
+        this.firstRadioButton.addActionListener(this);
+        this.secondRadioButton.addActionListener(this);
+        this.thirdRadioButton.addActionListener(this);
+        this.forthRadioButton.addActionListener(this);
+
+    }
+
+    /**
+     * Setup the labels.
+     */
+    private void setupJLabels(){
+        this.firstLabel = new JLabel("First Label: ");
+        this.secondLabel = new JLabel("Second Label: ");
+        this.thirdLabel = new JLabel("Third Label: ");
+        this.forthLabel = new JLabel("Forth Label: ");
+        this.inputBoxLabel = new JLabel("Input Label: ");
+    }
+
+    /**
+     * Sets up the text field with a scrollable area.
+     */
+    private void setupTextField(){
+        this.userInputField = new JTextField("Default text", 10);
+        DetailsPanel.outputTextArea = new JTextArea();
+        this.outputScrollArea = new JScrollPane(outputTextArea);
+        this.outputScrollArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        this.outputScrollArea.setPreferredSize(new Dimension(200, 55));
+        DetailsPanel.outputTextArea.setLineWrap(true);
+        DetailsPanel.outputTextArea.setEditable(false);
+    }
+
+    /**
+     * Sets up the action button at the bottom.
+     */
+    private void setupActionButton(){
+        this.actionButton = new JButton("Press Me!");
+        this.actionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputText = userInputField.getText().trim();
+                String outputText = inputText.toUpperCase() + "\n" + DetailsPanel.outputString + " button selected.";
+                fireDetailEvent(new DetailEvent(this, outputText));
+            }
+        });
+
+        addDetailListener(new DetailsListener(){
+            public void detailEventOccurred(DetailEvent event) {
+                DetailsPanel.outputTextArea.setText(event.getText());
+            }
+        });
+    }
+
+    /**
+     * Clearly this is just some kind of wizardry.
+     *
+     * I mean really?! We're going through this in double
+     * steps to find the DetailListener object or some shit..?
+     *
+     * @param event
+     */
+    private void fireDetailEvent(DetailEvent event) {
         Object[] listeners = listenerList.getListenerList();
 
         for(int i = 0; i < listeners.length; i += 2) {
-            // I mean really?! We're going through this in double
-            // steps to find the DetailListener object or some shit..?
-            if(listeners[i] == DetailListener.class){
-                ((DetailListener)listeners[i+1]).detailEventOccurred(event);
+            if(listeners[i] == DetailsListener.class){
+                ((DetailsListener)listeners[i+1]).detailEventOccurred(event);
             }
         }
     }
 
-    private void addDetailListener(DetailListener listener) {
-        listenerList.add(DetailListener.class, listener);
+    /**
+     * Listener for the input box. Updates the listener list with a new event.
+     *
+     * @param listener Input box messages are parsed
+     */
+    private void addDetailListener(DetailsListener listener) {
+        listenerList.add(DetailsListener.class, listener);
     }
 
-    public void removeDetailListener(DetailListener listener) {
-        listenerList.remove(DetailListener.class, listener);
+    /**
+     * Not yet implemented.
+     *
+     * @param listener Input box messages are parsed
+     */
+    public void removeDetailListener(DetailsListener listener) {
+        listenerList.remove(DetailsListener.class, listener);
         // One day ill do this. If I need to.
     }
 
+    /**
+     * Activates the action from the button.
+     *
+     * @param e Action performed from the listener.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        DetailsPanel.outputString = e.getActionCommand();
+        Detailsanel.outputString = e.getActionCommand();
     }
 }
