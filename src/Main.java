@@ -12,13 +12,15 @@ import java.net.URL;
 public class Main {
 
     public static void main(String[] args) {
-        //new CharLists();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run () {
                 JFrame frame = new MainFrame("Title bar");
                 frame.setSize(265, 300); // sets the size of the outside frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // sets up JFrame to close when cancelled.
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                frame.setUndecorated(true);
+
 
                 try {
                     URL resource = frame.getClass().getResource("/icon.png");
