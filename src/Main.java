@@ -18,8 +18,8 @@ public class Main {
                 JFrame frame = new MainFrame("Title bar");
                 frame.setSize(265, 300); // sets the size of the outside frame
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // sets up JFrame to close when cancelled.
-                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                frame.setUndecorated(true);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Sets the JFrame to fullscreen
+                frame.setUndecorated(true); // Hides the title bar
 
 
                 try {
