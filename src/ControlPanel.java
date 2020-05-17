@@ -5,10 +5,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.event.EventListenerList;
 
-public class DetailsPanel extends JPanel implements ActionListener {
+public class ControlPanel extends JPanel implements ActionListener {
 
     /**
-     * All of the variables used for the DetailsPanel class.
+     * All of the variables used for the ControlPanel class.
      */
     public final static String FIRST_STRING = "First";
     public final static String SECOND_STRING = "Second";
@@ -37,12 +37,12 @@ public class DetailsPanel extends JPanel implements ActionListener {
     /**
      * Sets up the details panel on the left, with a lovely wee border.
      */
-    public DetailsPanel() {
+    public ControlPanel(String titleBar) {
         Dimension size = getPreferredSize();
         size.width = 250; // Sets up the width of the inside frame
         setPreferredSize(size);
 
-        setBorder(BorderFactory.createTitledBorder("Control Panel"));
+        setBorder(BorderFactory.createTitledBorder(titleBar));
 
         this.setupRadioButtons();
         this.setupJLabels();
@@ -60,37 +60,37 @@ public class DetailsPanel extends JPanel implements ActionListener {
         gc.anchor = GridBagConstraints.LINE_END;
         gc.gridx = 0;
         gc.gridy = 0;
-        add(firstLabel, gc);
+        add(this.firstLabel, gc);
         ++gc.gridy;
-        add(secondLabel, gc);
+        add(this.secondLabel, gc);
         ++gc.gridy;
-        add(thirdLabel, gc);
+        add(this.thirdLabel, gc);
         ++gc.gridy;
-        add(forthLabel, gc);
+        add(this.forthLabel, gc);
         ++gc.gridy;
-        add(inputBoxLabel, gc);
+        add(this.inputBoxLabel, gc);
 
 
         // Second column
         gc.anchor = GridBagConstraints.LINE_START;
         gc.gridx = 1;
         gc.gridy = 0;
-        add(firstRadioButton, gc);
+        add(this.firstRadioButton, gc);
         ++gc.gridy;
-        add(secondRadioButton, gc);
+        add(this.secondRadioButton, gc);
         ++gc.gridy;
-        add(thirdRadioButton, gc);
+        add(this.thirdRadioButton, gc);
         ++gc.gridy;
-        add(forthRadioButton, gc);
+        add(this.forthRadioButton, gc);
         ++gc.gridy;
-        add(userInputField, gc);
+        add(this.userInputField, gc);
 
         // Add the text panel where the password is written to
         gc.anchor = GridBagConstraints.BASELINE;
         ++gc.gridy;
         gc.gridx = 0;
         gc.gridwidth = 2;
-        add(outputScrollArea, gc);
+        add(this.outputScrollArea, gc);
 
         // Generate button Row
         gc.weighty = 10;
@@ -151,12 +151,12 @@ public class DetailsPanel extends JPanel implements ActionListener {
      */
     private void setupTextField(){
         this.userInputField = new JTextField("Default text", 10);
-        DetailsPanel.outputTextArea = new JTextArea();
+        ControlPanel.outputTextArea = new JTextArea();
         this.outputScrollArea = new JScrollPane(outputTextArea);
         this.outputScrollArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         this.outputScrollArea.setPreferredSize(new Dimension(200, 55));
-        DetailsPanel.outputTextArea.setLineWrap(true);
-        DetailsPanel.outputTextArea.setEditable(false);
+        ControlPanel.outputTextArea.setLineWrap(true);
+        ControlPanel.outputTextArea.setEditable(false);
     }
 
     /**
@@ -168,14 +168,14 @@ public class DetailsPanel extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String inputText = userInputField.getText().trim();
-                String outputText = inputText.toUpperCase() + "\n" + DetailsPanel.outputString + " button selected.";
-                fireDetailEvent(new DetailEvent(this, outputText));
+                String outputText = inputText.toUpperCase() + "\n" + ControlPanel.outputString + " button selected.";
+                fireControlPanelEvent(new CPEvent(this, outputText));
             }
         });
 
-        addDetailListener(new DetailsListener(){
-            public void detailEventOccurred(DetailEvent event) {
-                DetailsPanel.outputTextArea.setText(event.getText());
+        this.addControlPanelListener(new CPListener(){
+            public void detailEventOccurred(CPEvent event) {
+                ControlPanel.outputTextArea.setText(event.getText());
             }
         });
     }
@@ -184,16 +184,16 @@ public class DetailsPanel extends JPanel implements ActionListener {
      * Clearly this is just some kind of wizardry.
      *
      * I mean really?! We're going through this in double
-     * steps to find the DetailListener object or some shit..?
+     * steps to find the CPListener object or some shit..?
      *
-     * @param event
+     * @param event The event passed from the listener to the actionPerformed method.
      */
-    private void fireDetailEvent(DetailEvent event) {
-        Object[] listeners = listenerList.getListenerList();
+    private void fireControlPanelEvent(CPEvent event) {
+        Object[] listeners = this.listenerList.getListenerList();
 
         for(int i = 0; i < listeners.length; i += 2) {
-            if(listeners[i] == DetailsListener.class){
-                ((DetailsListener)listeners[i+1]).detailEventOccurred(event);
+            if(listeners[i] == CPListener.class){
+                ((CPListener)listeners[i+1]).detailEventOccurred(event);
             }
         }
     }
@@ -201,19 +201,19 @@ public class DetailsPanel extends JPanel implements ActionListener {
     /**
      * Listener for the input box. Updates the listener list with a new event.
      *
-     * @param listener Input box messages are parsed
+     * @param listener Input box messages are detected here from the user input.
      */
-    private void addDetailListener(DetailsListener listener) {
-        listenerList.add(DetailsListener.class, listener);
+    private void addControlPanelListener(CPListener listener) {
+        this.listenerList.add(CPListener.class, listener);
     }
 
     /**
      * Not yet implemented.
      *
-     * @param listener Input box messages are parsed
+     * @param listener Removes a listener object from the list. I guess.
      */
-    public void removeDetailListener(DetailsListener listener) {
-        listenerList.remove(DetailsListener.class, listener);
+    public void removeControlPanelListener(CPListener listener) {
+        this.listenerList.remove(CPListener.class, listener);
         // One day ill do this. If I need to.
     }
 
@@ -224,6 +224,6 @@ public class DetailsPanel extends JPanel implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        Detailsanel.outputString = e.getActionCommand();
+        ControlPanel.outputString = e.getActionCommand();
     }
 }

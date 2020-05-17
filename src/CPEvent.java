@@ -1,8 +1,8 @@
 import java.util.EventObject;
 
-public class DetailEvent extends EventObject{
+public class CPEvent extends EventObject{
     private String text;
-    public DetailEvent(Object source, String text){
+    public CPEvent(Object source, String text){
         super(source);
 
         this.text = text;
